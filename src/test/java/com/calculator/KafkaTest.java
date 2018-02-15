@@ -6,9 +6,12 @@ package com.calculator;
 import com.calculator.kafka.services.KafkaProducer;
 import com.calculator.kafka.services.KafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -20,6 +23,7 @@ import org.springframework.kafka.listener.config.ContainerProperties;
 import org.springframework.kafka.test.rule.KafkaEmbedded;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Map;
@@ -28,62 +32,87 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThat;
+import static org.springframework.kafka.test.assertj.KafkaConditions.key;
 import static org.springframework.kafka.test.hamcrest.KafkaMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@DirtiesContext
 public class KafkaTest {
 
-    private static final String TEMPLATE_TOPIC = "templateTopic";
-
-    @ClassRule
-    public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, TEMPLATE_TOPIC);
-
+    // in case I need to send some integers
     private Integer i1 = 0;
     private Integer i2 = 3;
 
-    @Test
+    private static final String SENDER_TOPIC = "addition";
+    String sendert = "addition";
+    @Autowired
+    private KafkaProducer producer;
+
+    private KafkaMessageListenerContainer<String, Integer> container;
+
+    private BlockingQueue<ConsumerRecord<String, Integer>> records;
+
+
+    @ClassRule
+    public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, SENDER_TOPIC);
+
+
+
+    @Before
     public void testTemplate() throws Exception {
-        Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("testT", "false",
-                embeddedKafka);
-        KafkaProducer producer = new KafkaProducer();
-        KafkaConsumer consumer = new KafkaConsumer();
 
+        // set up the Kafka consumer properties
+        Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps("sender", "false", embeddedKafka);
 
+        // create a Kafka consumer factory
+        DefaultKafkaConsumerFactory<String, Integer> consumerFactory = new DefaultKafkaConsumerFactory<String, Integer>(consumerProperties);
 
-        
-        DefaultKafkaConsumerFactory<String, Integer> cf = new DefaultKafkaConsumerFactory<String, Integer>(consumerProps);
-        ContainerProperties containerProperties = new ContainerProperties(TEMPLATE_TOPIC);
-        KafkaMessageListenerContainer<String, Integer> container = new KafkaMessageListenerContainer<>(cf, containerProperties);
-        final BlockingQueue<ConsumerRecord<String, Integer>> records = new LinkedBlockingQueue<>();
+        // set the topic that needs to be consumed
+        ContainerProperties containerProperties = new ContainerProperties(SENDER_TOPIC);
+
+        // create a Kafka MessageListenerContainer
+        container = new KafkaMessageListenerContainer<>(consumerFactory, containerProperties);
+
+        // create a thread safe queue to store the received message
+        records = new LinkedBlockingQueue<>();
+
+        // setup a Kafka message listener
         container.setupMessageListener(new MessageListener<String, Integer>() {
-
             @Override
             public void onMessage(ConsumerRecord<String, Integer> record) {
-                System.out.println(record);
                 records.add(record);
             }
-
         });
-        container.setBeanName("templateTests");
+
+        // start the container and underlying message listener
         container.start();
+
+        // wait until the container has the required number of assigned partitions
         ContainerTestUtils.waitForAssignment(container, embeddedKafka.getPartitionsPerTopic());
-        Map<String, Object> senderProps =
-                KafkaTestUtils.senderProps(embeddedKafka.getBrokersAsString());
-        ProducerFactory<String, Integer> pf = new DefaultKafkaProducerFactory<String, Integer>(senderProps);
-        KafkaTemplate<String, Integer> template = new KafkaTemplate<>(pf);
-        template.setDefaultTopic(TEMPLATE_TOPIC);
-        template.sendDefault(i1);
-        assertThat(records.poll(10, TimeUnit.SECONDS), hasValue(i1));
-        template.sendDefault(0, "input", i1);
-        ConsumerRecord<String, Integer> received = records.poll(10, TimeUnit.SECONDS);
-        assertThat(received, hasKey("input"));
-        assertThat(received, hasPartition(0));
-        assertThat(received, hasValue(i1));
-        template.send(TEMPLATE_TOPIC, 0, "input", i2);
-        received = records.poll(10, TimeUnit.SECONDS);
-        assertThat(received, hasKey("input"));
-        assertThat(received, hasPartition(0));
-        assertThat(received, hasValue(i2));
+
+
     }
+
+    @After
+    public void tearDown() {
+        // stop the container
+        container.stop();
+    }
+
+    @Test
+    public void testSend() throws InterruptedException {
+        // send the message
+        String greeting = "Hello Spring Kafka Sender!";
+        producer.send(i1);
+
+        // check that the message was received
+        ConsumerRecord<String, Integer> received = records.poll(10, TimeUnit.SECONDS);
+        // Hamcrest Matchers to check the value
+        assertThat(received, hasValue(i1));
+
+        // AssertJ Condition to check the key
+//        assertThat(received).has(key(null));
+    }
+
 }
