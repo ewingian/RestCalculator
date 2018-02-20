@@ -115,6 +115,9 @@ public class KafkaProducerTest {
         // send the message
         producer.send(i1);
 
+        // Not sure why the consumer record is not receiving anything form me.
+        // Still investigating, but managed to perform the most basic of tests.
+
 //        // check that the message was received
 //        ConsumerRecord<String, Integer> received = records.poll(10, TimeUnit.SECONDS);
 //        // Hamcrest Matchers to check the value
