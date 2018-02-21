@@ -23,5 +23,5 @@ This test has proven a little trickier to even pass successfully. I have what I 
    <li> Expected :2 </li>
    <li> Actual   :1 </li>
 </ul><br>
-I was going to attempt a MockConsumer test, but that would have created a extra work in the consumer, I think that would be well beyond the necessary scope. 
+I was going to attempt a MockConsumer test, but that would have created a extra work in the consumer, I think that would be well beyond the necessary scope. The error is thrown from a failed assertEquals. So I am trying to figure out where the root of the failure.
 
