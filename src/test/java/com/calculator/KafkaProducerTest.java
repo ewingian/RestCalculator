@@ -5,7 +5,13 @@ package com.calculator;
  */
 import com.calculator.kafka.services.KafkaProducer;
 import com.calculator.kafka.services.KafkaConsumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
+import org.apache.kafka.common.serialization.IntegerSerializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -16,9 +22,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.listener.config.ContainerProperties;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.rule.KafkaEmbedded;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
@@ -70,7 +80,8 @@ public class KafkaProducerTest {
 
         // set up the Kafka consumer properties
         Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps("test-group", "false", embeddedKafka);
-
+        consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         // create a Kafka consumer factory
         DefaultKafkaConsumerFactory<String, Integer> consumerFactory = new DefaultKafkaConsumerFactory<>(consumerProperties);
 
@@ -118,13 +129,13 @@ public class KafkaProducerTest {
         // Not sure why the consumer record is not receiving anything form me.
         // Still investigating, but managed to perform the most basic of tests.
 
-//        // check that the message was received
-//        ConsumerRecord<String, Integer> received = records.poll(10, TimeUnit.SECONDS);
-//        // Hamcrest Matchers to check the value
-//        assertThat(received, hasValue(i1));
-//
-//        // AssertJ Condition to check the key
-//        assertThat(received, hasKey(null));
+        // check that the message was received
+        ConsumerRecord<String, Integer> received = records.poll(10, TimeUnit.SECONDS);
+        // Hamcrest Matchers to check the value
+        assertThat(received, hasValue(i1));
+
+        // AssertJ Condition to check the key
+        assertThat(received, hasKey(null));
     }
 
 }
