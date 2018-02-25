@@ -5,7 +5,13 @@ package com.calculator;
  */
 import com.calculator.kafka.services.KafkaProducer;
 import com.calculator.kafka.services.KafkaConsumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
+import org.apache.kafka.common.serialization.IntegerSerializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -61,8 +67,9 @@ public class KafkaConsumerTest {
     @Before
     public void setUp() throws Exception {
         // set up the Kafka producer properties
-        Map<String, Object> senderProperties =
-                KafkaTestUtils.senderProps(embeddedKafka.getBrokersAsString());
+        Map<String, Object> senderProperties = KafkaTestUtils.producerProps(embeddedKafka);
+        senderProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        senderProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
 
         // create a Kafka producer factory
         ProducerFactory<String, Integer> producerFactory =

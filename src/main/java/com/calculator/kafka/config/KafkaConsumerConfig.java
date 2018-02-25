@@ -15,6 +15,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.test.rule.KafkaEmbedded;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    @Value("localhost:9092")
+    @Value("${" + KafkaEmbedded.SPRING_EMBEDDED_KAFKA_BROKERS + ":localhost:9092}")
     private String bootstrapServer;
 
     @Value("test-group")
