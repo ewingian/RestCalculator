@@ -26,10 +26,10 @@ public class CalculatorController {
     private KafkaProducer producer;
 
     // get practice
-    @RequestMapping("greeting")
-    public Calculator calculator(@RequestParam(value="name", defaultValue="World") String name) {
-        return new Calculator(counter.incrementAndGet(), String.format(template, name));
-    }
+//    @RequestMapping("greeting")
+//    public Calculator calculator(@RequestParam(value="name", defaultValue="World") String name) {
+//        return new Calculator(counter.incrementAndGet(), String.format(template, name));
+//    }
 
     // put practice
     @RequestMapping(value="add", method = RequestMethod.PUT)
