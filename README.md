@@ -10,6 +10,7 @@ Total: a uri that returns the running total
 http://localhost:8080/calculator/total
 
 <h1>Latest update</h1>
+2/25/18 (14:31) - I fixed the consumer test. Had to wire the consumer congif for embedded kafka. Also had to update the senderProperites to use Serializers instead of deserializers.<br>
 2/25/18 - I fixed the container error. I have also fixed the producer unit test. Had to wire the producer to use embedded kafka
 Removed the greeting tests from this project. They were unecessary outside of helping me get a restful spring application up and running.
 2/25/18 - I seem to have completely broken the project.<br>
