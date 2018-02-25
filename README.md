@@ -9,6 +9,11 @@ http://localhost:8080/calculator/add?val=5
 Total: a uri that returns the running total
 http://localhost:8080/calculator/total
 
+<h1>Latest update</h1>
+2/25/19 - I seem to have completely broken the project.<br>
+   2018-02-25 11:01:08.408 ERROR 16400 --- [ntainer#0-0-C-1] essageListenerContainer$ListenerConsumer : Container exception<br>
+I cant even run the project any more. <br>
+Attempting to start from scratch.
 
 <h2>Notes on the unit testing:</h2><br>
 I do not want to take forever on this project. So I am submitting the code now for review, while I continue to work on the unit tests. I am having issues running unit tests on the kafka side of this code.
