@@ -26,6 +26,7 @@ I do not want to take forever on this project. So I am submitting the code now f
 For the kafka producer, I have a basic unit test that sends an integer. No exceptions are thrown. I tried to add a consumer record to pick up the integers being passed for extra validation. As far a I can tell right now, the container listener is not working, so I am currently trying to figure out what I did wrong.
 
 <h3>Kafka Consumer Test</h3>
+2/25/18 <b>Solved</b><br>
 This test has proven a little trickier to even pass successfully. I have what I think is a basic unit test for a Kafka Consumer, but I am getting an exception in the test. <br>
 <ul>
    <li> org.junit.ComparisonFailure: </li>
