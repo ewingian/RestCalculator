@@ -10,6 +10,7 @@ Total: a uri that returns the running total
 http://localhost:8080/calculator/total
 
 <h1>Latest update</h1>
+2/25/19 - I fixed the container error. I have also fixed the producer unit test. Had to wire the producer to use embedded kafka
 2/25/19 - I seem to have completely broken the project.<br>
    2018-02-25 11:01:08.408 ERROR 16400 --- [ntainer#0-0-C-1] essageListenerContainer$ListenerConsumer : Container exception<br>
 I cant even run the project any more. <br>
