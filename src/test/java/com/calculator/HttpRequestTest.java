@@ -30,12 +30,6 @@ public class HttpRequestTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void greetingShouldReturnDefaultMessage() throws Exception {
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/calculator/greeting",
-                String.class)).contains("Hello, World!");
-    }
-
-    @Test
     public void addShoulddReturnInteger() throws Exception{
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + "calculator/add?val=5", Integer.class)).isEqualTo(5);
     }
