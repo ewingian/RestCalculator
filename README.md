@@ -1,7 +1,5 @@
 Restful calculator:
 
-Greeting: A test uri during my intial coding
-http://localhost:8080/calculator/greeting
 
 Add: a uri that adds an integer to a running total
 http://localhost:8080/calculator/add?val=5
