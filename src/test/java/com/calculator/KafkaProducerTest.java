@@ -55,8 +55,6 @@ public class KafkaProducerTest {
 
     private static final String SENDER_TOPIC = "input";
 
-    private List<Integer> l1;
-
     @Autowired
     private KafkaProducer producer;
 
