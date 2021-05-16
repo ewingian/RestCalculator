@@ -16,8 +16,6 @@ Removed the greeting tests from this project. They were unecessary outside of he
 I cant even run the project any more. <br>
 Attempting to start from scratch.
 
-<h2>Notes on the unit testing:</h2><br>
-I do not want to take forever on this project. So I am submitting the code now for review, while I continue to work on the unit tests. I am having issues running unit tests on the kafka side of this code.
 
 <h3>Kafka Prodcuer Test</h3>
 2/25/18 <b>Solved</b><br>
